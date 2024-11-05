@@ -28,8 +28,6 @@ func (c *Client) ListLocations(pageURL *string) (LocationsShallowResponse, error
 		if err != nil {
 			return LocationsShallowResponse{}, err
 		}
-
-		c.pokeCache.Add(url, data)
 	}
 
 	locationsResp := LocationsShallowResponse{}
@@ -37,6 +35,8 @@ func (c *Client) ListLocations(pageURL *string) (LocationsShallowResponse, error
 	if err != nil {
 		return LocationsShallowResponse{}, err
 	}
+
+	c.pokeCache.Add(url, data)
 
 	return locationsResp, nil
 }
