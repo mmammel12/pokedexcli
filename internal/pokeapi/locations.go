@@ -13,20 +13,27 @@ func (c *Client) ListLocations(pageURL *string) (LocationsShallowResponse, error
 		url = *pageURL
 	}
 
-	resp, err := http.Get(url)
-	if err != nil {
-		return LocationsShallowResponse{}, err
-	}
+	var data []byte
+	if cacheEntry, exists := c.pokeCache.Get(url); exists {
+		data = cacheEntry
+	} else {
+		resp, err := http.Get(url)
+		if err != nil {
+			return LocationsShallowResponse{}, err
+		}
 
-	defer resp.Body.Close()
+		defer resp.Body.Close()
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return LocationsShallowResponse{}, err
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return LocationsShallowResponse{}, err
+		}
+
+		c.pokeCache.Add(url, data)
 	}
 
 	locationsResp := LocationsShallowResponse{}
-	err = json.Unmarshal(data, &locationsResp)
+	err := json.Unmarshal(data, &locationsResp)
 	if err != nil {
 		return LocationsShallowResponse{}, err
 	}
