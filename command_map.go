@@ -15,7 +15,7 @@ func commandMap(c *config, _ []string) error {
 
 	fmt.Println()
 	for _, location := range locationsResp.Results {
-		fmt.Println("\t- " + location.Name)
+		fmt.Printf("\t- %v\n", location.Name)
 	}
 	fmt.Println()
 
@@ -33,7 +33,7 @@ func commandMapb(c *config, _ []string) error {
 
 	fmt.Println()
 	for _, location := range locationsResp.Results {
-		fmt.Println("\t- " + location.Name)
+		fmt.Printf("\t- %v\n", location.Name)
 	}
 	fmt.Println()
 

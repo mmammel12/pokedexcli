@@ -2,12 +2,12 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"os"
 )
 
 func commandExit(*config, []string) error {
 	os.Exit(0)
 
-	return errors.New("Failed to exit")
+	return fmt.Errorf("Failed to exit")
 }

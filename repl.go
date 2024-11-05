@@ -32,7 +32,7 @@ func startRepl(c *config) {
 			}
 		} else {
 			fmt.Println()
-			fmt.Println("Unknown command - type 'help' for help")
+			fmt.Printf("Unknown command '%v' - type 'help' for help", commandName)
 			fmt.Println()
 		}
 	}
