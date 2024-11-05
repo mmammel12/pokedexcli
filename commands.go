@@ -10,8 +10,9 @@ type cliCommand struct {
 
 type config struct {
 	pokeapiClient pokeapi.Client
-	Next          *string `json:"next"`
-	Previous      *string `json:"previous"`
+	Next          *string
+	Previous      *string
+	caughtPokemon map[string]pokeapi.Pokemon
 }
 
 func getCommands() map[string]cliCommand {
@@ -40,6 +41,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Explore an area to see the pokemon available - Example: explore pastoria-city-area",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Try to catch a pokemon - Example: catch pikachu",
+			callback:    commandCatch,
 		},
 	}
 }

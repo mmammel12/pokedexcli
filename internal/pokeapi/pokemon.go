@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-// ListPokemon -
-func (c *Client) ListPokemon(locationArea string) ([]string, error) {
-	url := baseURL + "/location-area/" + locationArea
+// GetPokemon -
+func (c *Client) GetPokemon(name string) (Pokemon, error) {
+	url := baseURL + "/pokemon/" + name
 
 	var data []byte
 	if cacheEntry, exists := c.pokeCache.Get(url); exists {
@@ -17,36 +17,70 @@ func (c *Client) ListPokemon(locationArea string) ([]string, error) {
 	} else {
 		res, err := http.Get(url)
 		if err != nil {
-			return nil, err
+			return Pokemon{}, err
 		}
-		defer res.Body.Close()
 
 		if res.StatusCode == 404 {
-			return nil, fmt.Errorf("Could not find area '%v'", locationArea)
+			return Pokemon{}, fmt.Errorf("Could not find pokemon '%v'", name)
 		}
 		if res.StatusCode > 299 {
-			return nil, fmt.Errorf("Error occurred while fetching pokemon")
+			return Pokemon{}, fmt.Errorf("Error occurred while fetching pokemon")
 		}
+
+		defer res.Body.Close()
 
 		data, err = io.ReadAll(res.Body)
 		if err != nil {
-			return nil, err
+			return Pokemon{}, err
 		}
 	}
 
-	locationsResp := LocationFullResponse{}
-	err := json.Unmarshal(data, &locationsResp)
+	pokemon := Pokemon{}
+	err := json.Unmarshal(data, &pokemon)
 	if err != nil {
-		fmt.Println("unmarshal fail")
-		return nil, err
+		return Pokemon{}, err
 	}
 
 	c.pokeCache.Add(url, data)
 
-	pokemon := make([]string, len(locationsResp.PokemonEncounters))
-	for i, p := range locationsResp.PokemonEncounters {
-		pokemon[i] = p.Pokemon.Name
+	return pokemon, nil
+}
+
+// GetPokemonSpecies -
+func (c *Client) GetPokemonSpecies(name string) (Species, error) {
+	url := baseURL + "/pokemon-species/" + name
+
+	var data []byte
+	if cacheEntry, exists := c.pokeCache.Get(url); exists {
+		data = cacheEntry
+	} else {
+		res, err := http.Get(url)
+		if err != nil {
+			return Species{}, err
+		}
+
+		if res.StatusCode == 404 {
+			return Species{}, fmt.Errorf("Could not find pokemon '%v'", name)
+		}
+		if res.StatusCode > 299 {
+			return Species{}, fmt.Errorf("Error occurred while fetching pokemon")
+		}
+
+		defer res.Body.Close()
+
+		data, err = io.ReadAll(res.Body)
+		if err != nil {
+			return Species{}, err
+		}
 	}
 
-	return pokemon, nil
+	species := Species{}
+	err := json.Unmarshal(data, &species)
+	if err != nil {
+		return Species{}, err
+	}
+
+	c.pokeCache.Add(url, data)
+
+	return species, nil
 }
