@@ -42,13 +42,19 @@ func (p *Pokecache) Get(key string) ([]byte, bool) {
 
 // reapLoop -
 func (p *Pokecache) reapLoop(interval time.Duration) {
-	now := time.Now()
+	ticker := time.NewTicker(interval)
+	for range ticker.C {
+		now := time.Now()
+		p.reap(now, interval)
+	}
+}
+
+func (p *Pokecache) reap(now time.Time, interval time.Duration) {
 	for k, v := range p.entries {
 		if now.Sub(v.createdAt) > interval {
 			p.mux.Lock()
 			delete(p.entries, k)
 			p.mux.Unlock()
-
 		}
 	}
 }
@@ -62,12 +68,7 @@ func NewCache(interval time.Duration) *Pokecache {
 		mux:     mux,
 	}
 
-	go func() {
-		ticker := time.NewTicker(interval)
-		for range ticker.C {
-			p.reapLoop(interval)
-		}
-	}()
+	go p.reapLoop(interval)
 
 	return p
 }
