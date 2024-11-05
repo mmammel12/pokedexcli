@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func commandMap(c *config) error {
+func commandMap(c *config, _ []string) error {
 	locationsResp, err := c.pokeapiClient.ListLocations(c.Next)
 	if err != nil {
 		return err
@@ -15,14 +15,14 @@ func commandMap(c *config) error {
 
 	fmt.Println()
 	for _, location := range locationsResp.Results {
-		fmt.Println(location.Name)
+		fmt.Println("\t- " + location.Name)
 	}
 	fmt.Println()
 
 	return nil
 }
 
-func commandMapb(c *config) error {
+func commandMapb(c *config, _ []string) error {
 	locationsResp, err := c.pokeapiClient.ListLocations(c.Previous)
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func commandMapb(c *config) error {
 
 	fmt.Println()
 	for _, location := range locationsResp.Results {
-		fmt.Println(location.Name)
+		fmt.Println("\t- " + location.Name)
 	}
 	fmt.Println()
 

@@ -20,9 +20,13 @@ func startRepl(c *config) {
 		}
 
 		commandName := input[0]
+		args := []string{}
+		if len(input) > 1 {
+			args = input[1:]
+		}
 
 		if command, exists := commands[commandName]; exists {
-			err := command.callback(c)
+			err := command.callback(c, args)
 			if err != nil {
 				fmt.Println(err.Error())
 			}

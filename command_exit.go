@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func commandExit(*config) error {
+func commandExit(*config, []string) error {
 	os.Exit(0)
 
 	return errors.New("Failed to exit")
